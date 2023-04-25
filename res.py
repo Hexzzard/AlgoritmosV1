@@ -7,7 +7,9 @@ np.set_printoptions(precision=2, suppress=True)
 
 def miVersion(x):
     #matriz de m *n | m = n° de variables | n = n° de restricciones
-    pattern = r'([-+]?\d*)\s*([a-zA-Z]\d+)|=\s*(\d+)|([<>])'
+    #r'([-+]?\d*\.?\d+)\s*([a-zA-Z]\d+)|=\s*([-+]?\d*\.?\d+)|([<>])')
+    #r'([-+]?\d*)\s*([a-zA-Z]\d+)|=\s*(\d+)|([<>])'
+    pattern = r'([-+]?\d*\.?\d+)\s*([a-zA-Z]\d+)|=\s*([-+]?\d*\.?\d+)|([<>])'
    
     lines = x.strip().split('\n')
     print(re.findall(pattern, lines[2]))
@@ -35,7 +37,7 @@ def miVersion(x):
                 if(Lr):
                     matriz[i][len(matriz[i])-1] = Lr
             else:
-                coeff = int(coeff_str) if coeff_str not in ['','+','-'] else 1 if(coeff_str!='-') else -1
+                coeff = float(coeff_str) if coeff_str not in ['','+','-'] else 1 if(coeff_str!='-') else -1
                 matriz[i][int(var[1:])-1] += coeff*inverted
         matriz[i][j] = 1
         i+=1
@@ -50,7 +52,7 @@ def Simplex(x,max):
     n = len(x)
     iteracion = 0
 
-    while(iteracion<2):
+    while(True):
         cPivValue = cPiv = fPiv = fPivValue = -1
 
         if(max):
@@ -68,17 +70,17 @@ def Simplex(x,max):
                     fPiv = i
             if(fPiv==0):
                 break
-        
         for i in range(1,n):
             if (x[i][fPiv]>0):
-                if(cPivValue>x[i][fPiv] or cPivValue<0):
+                if(cPivValue>(x[i][m-1]/(x[i][fPiv])) or cPivValue<0):
                     cPivValue=x[i][m-1]/(x[i][fPiv])
                     cPiv = i
-                
+
         Piv =x[cPiv][fPiv]
 
         for i in range(m):
             x[cPiv][i]= x[cPiv][i]/Piv
+
 
         for i in range(n):
             tPiv = x[i][fPiv]
@@ -93,9 +95,15 @@ def Simplex(x,max):
 #minimize
 input = """maximize 2x1 -3x2 +3x3 = Z
 subject to
-12x1 +23x2 +20x3>= 15
+1.2x1 +23x2 +20x3>= 15
 22x1 -15x2 <= 100
 12x1 <= 21
 11x1 +23x2 +5x3 <= 60"""
+input_str2 = """minimize 30000x1 +50000x2 +6x3 +234x4
+subject to
+x1 +5x4<= 4
+2.5x2 +4x1 +5x3 >= 12
+3x1 + 2x2 +20x4 >= 18
+"""
 
 miVersion(input)

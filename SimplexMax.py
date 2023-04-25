@@ -10,7 +10,7 @@ def miVersion(x):
     pattern = r'([-+]?\d*)\s*([a-zA-Z]\d+)|=\s*(\d+)'
     lines = x.strip().split('\n')
     vars = len(re.findall(pattern, lines[0]))
-    max = False
+    max = True
     matriz = np.zeros((len(lines)-1, vars+len(lines)))
     i, j = [1,vars+1]
 
@@ -98,4 +98,10 @@ subject to
 12x1 <= 21
 11x1 + 23x2 <= 60"""
 
-miVersion(input_str)
+input_str2 = """maximize 30000x1 + 50000x2
+subject to
+x1 <= 4
+2x2 <= 12
+3x1 + 2x2 <= 18
+"""
+miVersion(input_str2)

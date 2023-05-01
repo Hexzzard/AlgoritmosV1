@@ -51,6 +51,8 @@ def Simplex(x,max):
     m = len(x[0])
     n = len(x)
     iteracion = 0
+    encabezados = ["x1", "x2", "h1", "h2", "h3", "h4", "LD"]
+    filas = np.array(["/", "Z", "h1", "h2", "h3", "h4"]).reshape(-1,1)
 
     while(True):
         cPivValue = cPiv = fPiv = fPivValue = -1
@@ -77,6 +79,7 @@ def Simplex(x,max):
                     cPiv = i
 
         Piv =x[cPiv][fPiv]
+        filas[cPiv+1] = encabezados[fPiv]
 
         for i in range(m):
             x[cPiv][i]= x[cPiv][i]/Piv
@@ -90,15 +93,17 @@ def Simplex(x,max):
         
         iteracion+=1
         print("iteracion numero",iteracion)
-        print(x)
+        matriz = np.hstack((filas, np.vstack((encabezados, np.round(x, 2)))))
+        for fila in matriz:
+            print(*fila, sep="\t", end="\n")
             
 #minimize
-input = """maximize 2x1 -3x2 +3x3 = Z
+input = """maximize 2x1 +2x2 = Z
 subject to
-1.2x1 +23x2 +20x3>= 15
-22x1 -15x2 <= 100
-12x1 <= 21
-11x1 +23x2 +5x3 <= 60"""
+2x1 +x2  <= 100
+x1 +3x2 <= 80
+x1 <= 45
+x2 <= 100"""
 input_str2 = """minimize 30000x1 +50000x2 +6x3 +234x4
 subject to
 x1 +5x4<= 4

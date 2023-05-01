@@ -1,12 +1,8 @@
 import numpy as np
 import re
 
-np.set_printoptions(precision=2, suppress=True)
-
 VBv = []; VBh = [];VBintT = []; VBint = []; rengArr = []; iArt = []; xF = []; z = []; matriz = []
-vars = max = 0; xHuelg = -1;
-# pattern = r'([-+]?\d*)[ ]*([a-zA-Z]\d+)[ ]*([=][-+]?\d+)'
-# r'(?<=\s)([-+]?\d*[a-zA-Z]\d*|[-+]?\d+)(?=\s|$)'
+vars = max = 0; xHuelg = -1
 def añadir_huelgura(renglon, h, rengArr):
     if h == -1:
         renglon.extend([0 if i == -1 else 1 if i == 1 else 0 for i in rengArr])
@@ -111,16 +107,19 @@ def miVersion(x):
 
     if hayMayor:
         return fase12(matriz, vars, z)
+
     Simplex(matriz, vars)
     return matriz
 
 
 def fase12(matriz, vars, z):
+
     for i in range(len(matriz)-1):
         if xF[i][len(xF[i])-2] == '>':
             matriz[0] = [matriz[0][j] - matriz[i+1][j] for j in range(len(matriz[i]))]
+    print("Fase 1\nMatriz Inicial")
     matt = Simplex(matriz, vars)
-    tem = 1
+    tem = 1 
     tVBi = []
     for i in range(len(VBintT)):
         for j in range(len(VBint)):
@@ -142,15 +141,23 @@ def fase12(matriz, vars, z):
      else round(matt[0][j] - menosMatriz[j], 8)
     if str(matt[0][j] - menosMatriz[j])[::-1].find('.') > 8
     else matt[0][j] - menosMatriz[j] for j in range(len(matt[0]))]
-        print(matt)
-        print(1)
+    VBv.remove("a1")
+    print("Fase 2\nMatriz Inicial")
     matt = Simplex(matt, vars)
     return matt
 
-
 def Simplex(matriz, vars):
+    it = 0
+    
     for l in range(99):
-        print(matriz)
+        filas = ["", "Z"] + VBh
+        col = VBv + ["LD"]
+        Ematriz = np.hstack((np.array([filas]).reshape(-1,1), np.vstack((col, np.round(matriz, 2)))))
+        print(f"Iteracion {it}")   
+        for fila in Ematriz:
+            print(*fila, sep="\t", end="\n")
+        print("\n")
+        it+=1
         pivot = 0
         menorLD = 999999
         if l == 0:
@@ -191,7 +198,9 @@ def Simplex(matriz, vars):
             break
         VBh[iHorzPiv - 1] = VBv[iVertPiv]
         VBint[iHorzPiv - 1] = iVertPiv
+
     return [[round(xx, 5) for xx in aa] for aa in matriz]
+
 
 # minimize
 input = """maximize 2x1 -3x2 +3x3 = Z
@@ -208,4 +217,4 @@ subject to
 1x2 <= 30
 """
 
-print(miVersion(input))
+miVersion(input)

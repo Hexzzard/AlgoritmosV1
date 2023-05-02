@@ -1,8 +1,9 @@
 import numpy as np
 import re
 
-VBv = []; VBh = [];VBintT = []; VBint = []; rengArr = []; iArt = []; xF = []; z = []; matriz = []
+VBv = []; VBh = []; VBintT = []; VBint = []; rengArr = []; iArt = []; xF = []; z = []; matriz = []
 vars = max = 0; xHuelg = -1
+
 def añadir_huelgura(renglon, h, rengArr):
     if h == -1:
         renglon.extend([0 if i == -1 else 1 if i == 1 else 0 for i in rengArr])
@@ -15,7 +16,7 @@ def añadir_huelgura(renglon, h, rengArr):
             elif rengArr[j] == 0:
                 renglon.append(1)
             continue
-        if h+1 == j:
+        if h + 1 == j:
             if rengArr[h] == -1:
                 continue
         renglon.append(0)
@@ -23,7 +24,9 @@ def añadir_huelgura(renglon, h, rengArr):
 
 def miVersion(x):
     hayMayor = False
-    tempVBh = 1; tempVBint = 1; newTemp = 1
+    tempVBh = 1;
+    tempVBint = 1;
+    newTemp = 1
     # matriz de m *n | m = n° de variables | n = n° de restricciones
     # r'([-+]?\d*\.?\d+)\s*([a-zA-Z]\d+)|=\s*([-+]?\d*\.?\d+)|([<>])')
     # r'([-+]?\d*)\s*([a-zA-Z]\d+)|=\s*(\d+)|([<>])'
@@ -41,7 +44,9 @@ def miVersion(x):
     for i in range(2, len(lines)):
         y = re.findall(pattern, lines[i])
         tem = 0
-        xF.append([float(y[j][0]) if j < vars and y[j][0] != '' else float(y[j][len(y[0])-2]) if j == (len(y) - 1) else y[j][len(y[0])-1] if j == (len(y) - 2) else 0 for j in range(len(y))])
+        xF.append([float(y[j][0]) if j < vars and y[j][0] != '' else float(y[j][len(y[0]) - 2]) if j == (
+                    len(y) - 1) else y[j][len(y[0]) - 1] if j == (len(y) - 2) else 0 for j in range(len(y))])
+
         for j in range(vars):
             if tem > 0:
                 tem -= 1
@@ -55,7 +60,7 @@ def miVersion(x):
                 tem += 1
 
     for i in range(len(xF)):
-        match xF[i][len(xF[i])-2]:
+        match xF[i][len(xF[i]) - 2]:
             case '>':
                 rengArr.extend([-1, 1])
                 if hayMayor == False:
@@ -77,7 +82,8 @@ def miVersion(x):
                 tempVBint += 1
                 tempVBh += 1
 
-    z = [-float(i[0]) if max and hayMayor else float(i[0]) for i in re.findall(pattern, lines[0])]
+    z = [-float(i[0]) if max and hayMayor else -float(i[0]) if not max and not hayMayor else float(i[0]) for i in re.findall(pattern, lines[0])]
+
     try:
         zArtificial = añadir_huelgura(zArtificial, xHuelg, rengArr)
         zArtificial.append(0)
@@ -108,23 +114,30 @@ def miVersion(x):
     if hayMayor:
         return fase12(matriz, vars, z)
 
-    Simplex(matriz, vars)
-    return matriz
+
+    return Simplex(matriz, vars)
 
 
 def fase12(matriz, vars, z):
-
-    for i in range(len(matriz)-1):
-        if xF[i][len(xF[i])-2] == '>':
-            matriz[0] = [matriz[0][j] - matriz[i+1][j] for j in range(len(matriz[i]))]
     print("Fase 1\nMatriz Inicial")
+    filas = ["", "Z"] + VBh
+    col = VBv + ["LD"]
+    Ematriz = np.hstack((np.array([filas]).reshape(-1, 1), np.vstack((col, np.round(matriz, 2)))))
+    for fila in Ematriz:
+        print(*fila, sep="\t", end="\n")
+    print("\n")
+
+    for i in range(len(matriz) - 1):
+        if xF[i][len(xF[i]) - 2] == '>':
+            matriz[0] = [matriz[0][j] - matriz[i + 1][j] for j in range(len(matriz[i]))]
+
     matt = Simplex(matriz, vars)
-    tem = 1 
+    tem = 1
     tVBi = []
     for i in range(len(VBintT)):
         for j in range(len(VBint)):
             if VBint[j] > VBintT[i]:
-                tVBi.append(VBint[j]-tem)
+                tVBi.append(VBint[j] - tem)
             else:
                 tVBi.append(VBint[j])
         tem += 1
@@ -132,32 +145,45 @@ def fase12(matriz, vars, z):
     for i in range(len(matt)):
         for j in iArt[::-1]:
             del matt[i][j]
-    for i in range(1, len(VBintT)+2):
-        num = tVBi[i-1]
+
+    for j in iArt[::-1]:
+        del VBv[j]
+
+    print("Fase 2\nMatriz Inicial")
+    filas = ["", "Z"] + VBh
+    col = VBv + ["LD"]
+    Ematriz = np.hstack((np.array([filas]).reshape(-1, 1), np.vstack((col, np.round(matt, 2)))))
+    for fila in Ematriz:
+        print(*fila, sep="\t", end="\n")
+    print("\n")
+
+    #Se borran las variables básicas luego de que
+    for i in range(1, len(VBintT) + 2):
+        num = tVBi[i - 1]
         numZ = matt[0][num]
         menosMatriz = [j * numZ for j in matt[i]]
         matt[0] = [round(matt[0][j] - menosMatriz[j]) if (
-            0.000000001 > matt[0][j] - menosMatriz[j] > -0.000000000000000001)
-     else round(matt[0][j] - menosMatriz[j], 8)
-    if str(matt[0][j] - menosMatriz[j])[::-1].find('.') > 8
-    else matt[0][j] - menosMatriz[j] for j in range(len(matt[0]))]
-    VBv.remove("a1")
-    print("Fase 2\nMatriz Inicial")
+                0.000000001 > matt[0][j] - menosMatriz[j] > -0.000000000000000001)
+                   else round(matt[0][j] - menosMatriz[j], 8)
+        if str(matt[0][j] - menosMatriz[j])[::-1].find('.') > 8
+        else matt[0][j] - menosMatriz[j] for j in range(len(matt[0]))]
+
+
     matt = Simplex(matt, vars)
     return matt
 
+
 def Simplex(matriz, vars):
     it = 0
-    
     for l in range(99):
         filas = ["", "Z"] + VBh
         col = VBv + ["LD"]
-        Ematriz = np.hstack((np.array([filas]).reshape(-1,1), np.vstack((col, np.round(matriz, 2)))))
-        print(f"Iteracion {it}")   
+        Ematriz = np.hstack((np.array([filas]).reshape(-1, 1), np.vstack((col, np.round(matriz, 2)))))
+        print(f"Iteracion {it}")
         for fila in Ematriz:
             print(*fila, sep="\t", end="\n")
         print("\n")
-        it+=1
+        it += 1
         pivot = 0
         menorLD = 999999
         if l == 0:
@@ -173,6 +199,7 @@ def Simplex(matriz, vars):
 
         if pivot == 0:
             break
+
         for i in range(1, len(matriz)):
             if matriz[i][iVertPiv] <= 0:
                 continue
@@ -180,12 +207,15 @@ def Simplex(matriz, vars):
             if menorLDtest < menorLD:
                 menorLD = menorLDtest
                 iHorzPiv = i
+
         matriz[iHorzPiv] = [item / matriz[iHorzPiv][iVertPiv] for item in matriz[iHorzPiv]]
+
         for i in range(len(matriz)):
             if i == iHorzPiv:
                 continue
 
             num = matriz[i][iVertPiv]
+
             menosMatriz = [j * num for j in matriz[iHorzPiv]]
             # REDONDEO matriz
             matriz[i] = [round(matriz[i][j] - menosMatriz[j]) if (
@@ -193,19 +223,19 @@ def Simplex(matriz, vars):
                          else round(matriz[i][j] - menosMatriz[j], 8)
             if str(matriz[i][j] - menosMatriz[j])[::-1].find('.') > 8
             else matriz[i][j] - menosMatriz[j] for j in range(len(matriz[i]))]
-
         if not iHorzPiv:
             break
         VBh[iHorzPiv - 1] = VBv[iVertPiv]
         VBint[iHorzPiv - 1] = iVertPiv
 
+    #Ultimo redondeo, antes se redondeó con 8 numeros y ahora con 5 para acotar la respuesta
     return [[round(xx, 5) for xx in aa] for aa in matriz]
 
 
 # minimize
 input = """maximize 2x1 -3x2 +3x3 = Z
 subject to
-1.2x1 +23x2 +20x3>= 15
+1.2x1 +23x2 +20x3<= 150
 22x1 -15x2 <= 100
 12x1 <= 21
 11x1 +23x2 +5x3 <= 60"""

@@ -100,15 +100,28 @@ def Simplex(x,max):
 #minimize
 input = """maximize 2x1 +2x2 = Z
 subject to
+<<<<<<< Updated upstream
 2x1 +x2  <= 100
 x1 +3x2 <= 80
 x1 <= 45
 x2 <= 100"""
+=======
+x1 +3x2 +2x3 >= 15
+22x1 -15x2 <= 100
+12x1 <= 21
+11x1 +23x2 +5x3 <= 60"""
+>>>>>>> Stashed changes
 input_str2 = """minimize 30000x1 +50000x2 +6x3 +234x4
 subject to
 x1 +5x4<= 4
 2.5x2 +4x1 +5x3 >= 12
 3x1 + 2x2 +20x4 >= 18
 """
+input2 = """maximize 30000x1 + 50000x2
+subject to
+x1 <= 4
+2x2 <= 12
+3x1 + 2x2 <= 18
+"""
 
-miVersion(input)
+miVersion(input2)

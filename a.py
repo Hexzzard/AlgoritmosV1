@@ -25,7 +25,7 @@ def añadir_huelgura(renglon, h, rengArr):
 def miVersion(x):
     hayMayor = False
     tempVBh = 1;
-    tempVBint = 1;
+    tempVBint = -1;
     newTemp = 1
     # matriz de m *n | m = n° de variables | n = n° de restricciones
     # r'([-+]?\d*\.?\d+)\s*([a-zA-Z]\d+)|=\s*([-+]?\d*\.?\d+)|([<>])')
@@ -62,6 +62,7 @@ def miVersion(x):
     for i in range(len(xF)):
         match xF[i][len(xF[i]) - 2]:
             case '>':
+                tempVBint += 2
                 rengArr.extend([-1, 1])
                 if hayMayor == False:
                     hayMayor = True
@@ -71,15 +72,14 @@ def miVersion(x):
                 VBint.append(vars + tempVBint)
                 VBintT.append(vars + newTemp)
                 newTemp += 1
-                tempVBint += 2
                 tempVBh += 1
             case '<':
+                tempVBint += 1
                 rengArr.append(0)
                 VBv.append(f'h{tempVBh}')
                 VBh.append(f'h{tempVBh}')
                 VBint.append(vars + tempVBint)
                 newTemp += 1
-                tempVBint += 1
                 tempVBh += 1
 
     z = [-float(i[0]) if max and hayMayor else -float(i[0]) if not max and not hayMayor else float(i[0]) for i in re.findall(pattern, lines[0])]
@@ -134,13 +134,19 @@ def fase12(matriz, vars, z):
     matt = Simplex(matriz, vars)
     tem = 1
     tVBi = []
+    
     for i in range(len(VBintT)):
         for j in range(len(VBint)):
-            if VBint[j] > VBintT[i]:
+            if VBint[j] >= VBintT[i]:
                 tVBi.append(VBint[j] - tem)
             else:
                 tVBi.append(VBint[j])
         tem += 1
+    
+    for i in tVBi:
+        VBint.pop(0)
+        VBint.append(i)
+
     matt[0] = z
     for i in range(len(matt)):
         for j in iArt[::-1]:
@@ -168,8 +174,20 @@ def fase12(matriz, vars, z):
         if str(matt[0][j] - menosMatriz[j])[::-1].find('.') > 8
         else matt[0][j] - menosMatriz[j] for j in range(len(matt[0]))]
 
-
     matt = Simplex(matt, vars)
+    LDx = [0] * vars
+    for i in range(len(VBint)):
+        for j in range(vars):
+            if VBint[i] == j:
+                LDx[j] = matt[i+1][len(matt[0])-1]
+
+    print(LDx)
+    iSombra = sombra = 0
+    for i in range(vars, len(matt[0])-1):
+        if matt[0][i] > sombra:
+            sombra = matt[0][i]
+            iSombra = i
+    print(sombra, VBv[iSombra])
     return matt
 
 
@@ -224,10 +242,13 @@ def Simplex(matriz, vars):
             if str(matriz[i][j] - menosMatriz[j])[::-1].find('.') > 8
             else matriz[i][j] - menosMatriz[j] for j in range(len(matriz[i]))]
         if not iHorzPiv:
+            print(0)
             break
+
         VBh[iHorzPiv - 1] = VBv[iVertPiv]
         VBint[iHorzPiv - 1] = iVertPiv
-
+        print(VBh)
+        print(VBint)
     #Ultimo redondeo, antes se redondeó con 8 numeros y ahora con 5 para acotar la respuesta
     return [[round(xx, 5) for xx in aa] for aa in matriz]
 
@@ -235,7 +256,7 @@ def Simplex(matriz, vars):
 # minimize
 input = """maximize 2x1 -3x2 +3x3 = Z
 subject to
-1.2x1 +23x2 +20x3<= 150
+1.2x1 +23x2 +20x3>= 150
 22x1 -15x2 <= 100
 12x1 <= 21
 11x1 +23x2 +5x3 <= 60"""

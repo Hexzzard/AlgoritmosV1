@@ -38,16 +38,14 @@ def añadir_huelgura(renglon, h, rengArr):
         renglon.append(0)
     return renglon
 
-"""Funcion que se llama para tener respuestas"""
+"""Funcion que convierte el string de input en una matriz en forma aumentada"""
 def miVersion(x):
     hayMayor = False
     tempVBint = -1
     tempVBh = iArtemp = 1
-    # matriz de m *n | m = n° de variables | n = n° de restricciones
-    # r'([-+]?\d*\.?\d+)\s*([a-zA-Z]\d+)|=\s*([-+]?\d*\.?\d+)|([<>])')
-    # r'([-+]?\d*)\s*([a-zA-Z]\d+)|=\s*(\d+)|([<>])'
+    
     pattern = r'([-+]?\d*\.?\d+)\s*([a-zA-Z]\d+)|=\s*([-+]?\d*\.?\d+)|([<>])'
-    #patron del hexa XD
+    #[ numero (decimal), letra (x1, x2), LD, > o <]
     lines = x.strip().split('\n')
     vars = len(re.findall(pattern, lines[0]))
     max = re.search(r"^\w+", lines[0]).group() == "maximize"
@@ -60,8 +58,8 @@ def miVersion(x):
     #hh son los coeficientes de la función objetivo
     hh = re.findall(pattern, lines[0])
     #Se usan para hacer una matriz xF que es la matriz de restricciones pero ordenadas, como 
-    #[[10, 5, '<', 500],[...], ...]
-    #[[x1, x1, <>, LD], ...]
+
+    #convertimos todas las reestricciones en forma aumentada, desde la tercera linea, (primera liena funcion objetivo, segunda linea "subject to")
     for i in range(2, len(lines)):
         y = re.findall(pattern, lines[i])
         tem = 0
@@ -149,7 +147,7 @@ def fase12(matriz, vars, z):
 
     #Simple impresion por renglones en la matriz
     print("Fase 1\nMatriz Inicial")
-    filas = ["", "Z"] + VBh
+    filas = ["", "Z"] + VBh #cabeceros
     col = VBv + ["LD"]
     Ematriz = np.hstack((np.array([filas]).reshape(-1, 1), np.vstack((col, np.round(matriz, 2)))))
     for fila in Ematriz:
@@ -200,7 +198,7 @@ def fase12(matriz, vars, z):
         menosMatriz = [j * numZ for j in matt[i+1]]
         print(menosMatriz)
         matt[0] = [round(matt[0][j] - menosMatriz[j]) if (
-                0.000000001 > matt[0][j] - menosMatriz[j] > -0.000000000000000001)
+                0.000000001 > matt[0][j] - menosMatriz[j] > -0.000000000000000001) #aproximacion rara del Armin, no quiso usar round XD
                    else round(matt[0][j] - menosMatriz[j], 8)
         if str(matt[0][j] - menosMatriz[j])[::-1].find('.') > 8
         else matt[0][j] - menosMatriz[j] for j in range(len(matt[0]))]
@@ -289,7 +287,7 @@ def Simplex(matriz):
     return [[round(xx, 5) for xx in aa] for aa in matriz]
 
 
-# minimize
+# ejemplos de inputs
 input = """maximize 2x1 -3x2 +3x3 = Z
 subject to
 1.2x1 +23x2 +20x3>= 150
@@ -305,10 +303,10 @@ subject to
 """
 input_str3 = """maximize 1500x1 + 1400x2 + 1600x3 + 1450x4
 subject to
-1x1 + 1x3 >= 40
-1x2 + 1x4 >= 70
-2x1 - 1x2 + 2x3 - 1x4 <= 0
-1x1 + 1x2 <= 180
-1x3 + 1x4 <= 45
+x1 + x3 >= 40
+x2 + 1x4 >= 70
+2x1 - x2 + 2x3 - 1x4 <= 0
+x1 + x2 <= 180
+x3 + x4 <= 45
 """
 miVersion(input)

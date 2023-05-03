@@ -24,13 +24,14 @@ def añadir_huelgura(renglon, h, rengArr):
 
 def miVersion(x):
     hayMayor = False
-    tempVBh = 1;
-    tempVBint = -1;
+    tempVBh = 1
+    tempVBint = -1
     newTemp = 1
     # matriz de m *n | m = n° de variables | n = n° de restricciones
     # r'([-+]?\d*\.?\d+)\s*([a-zA-Z]\d+)|=\s*([-+]?\d*\.?\d+)|([<>])')
     # r'([-+]?\d*)\s*([a-zA-Z]\d+)|=\s*(\d+)|([<>])'
     pattern = r'([-+]?\d*\.?\d+)\s*([a-zA-Z]\d+)|=\s*([-+]?\d*\.?\d+)|([<>])'
+    # [ numero (decimal), letra (x1, x2), LD, > o <]
 
     lines = x.strip().split('\n')
     vars = len(re.findall(pattern, lines[0]))
@@ -268,4 +269,4 @@ subject to
 1x2 <= 30
 """
 
-miVersion(input)
+miVersion(input_str2)

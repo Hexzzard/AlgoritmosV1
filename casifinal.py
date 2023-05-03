@@ -203,6 +203,22 @@ def fase12(matriz, vars, z):
         else matt[0][j] - menosMatriz[j] for j in range(len(matt[0]))]
 
     matt = Simplex(matt)
+    
+    LDx = [0] * vars
+    for i in range(len(VBint)):
+        for j in range(vars):
+            if VBint[i] == j:
+                LDx[j] = matt[i + 1][len(matt[0]) - 1]
+
+
+    for i in range(vars):
+        print(f'x{i}={LDx[i]}')
+    iSombra = sombra = 0
+    for i in range(vars, len(matt[0]) - 1):
+        if matt[0][i] > sombra:
+            sombra = matt[0][i]
+            iSombra = i
+    print(str(VBv[iSombra]) + " = " + str(sombra))
     return matt
 
 

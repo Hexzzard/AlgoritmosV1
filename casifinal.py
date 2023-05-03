@@ -8,13 +8,16 @@ rengArr = [] #rengArr es segun las restricciones sean >= o <=, se agregan -1 1 p
 iArt = [] #Indice de variables artificiales en VBv
 xF = []; matriz = [] #xF es una matriz de los valores de las restricciones, coeficientes, >= o <= y LD, matriz es la matriz
 z = []; #Serán los coeficientes de la funcion objetivo + el renglon completo despues
+
 vars = 0; xHuelg = -1
 #vars = numero de variables, xHuelg es el indice para incrementar la huelgura
+
 """Añade huelgura de la funcion objetivo como de las restricciones en una matriz, retornando el renglon correspondiente
 Se pide 'renglon', siendo los coeficientes de cada variable, 'h' para saber si es la funcion objetivo o no como tambien 
 para ver el indice para poner los -1 1 en las restricciones >= o solo 1 en restricciones <=, y 'rengArr' para ver los 
 mismos indices junto con h"""
 def añadir_huelgura(renglon, h, rengArr):
+    
     """Si h = -1 se agrega a la funcion objetivo 0 y 1 correspondientes de holguras y variables artificiales,
     si h es 0 o mayor, osea son las restricciones, se agrega -1, 1 al indice de la restriccion que sea mayor o igual q,
     1 si es menor o igual que, para que quede como una matriz identidad según sean artificiales o no."""
@@ -35,7 +38,7 @@ def añadir_huelgura(renglon, h, rengArr):
         renglon.append(0)
     return renglon
 
-"""Funcion """
+"""Funcion que se llama para tener respuestas"""
 def miVersion(x):
     hayMayor = False
     tempVBint = -1

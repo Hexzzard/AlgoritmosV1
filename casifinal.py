@@ -47,22 +47,27 @@ def miVersion(x):
     # r'([-+]?\d*\.?\d+)\s*([a-zA-Z]\d+)|=\s*([-+]?\d*\.?\d+)|([<>])')
     # r'([-+]?\d*)\s*([a-zA-Z]\d+)|=\s*(\d+)|([<>])'
     pattern = r'([-+]?\d*\.?\d+)\s*([a-zA-Z]\d+)|=\s*([-+]?\d*\.?\d+)|([<>])'
-
+    #patron del hexa XD
     lines = x.strip().split('\n')
     vars = len(re.findall(pattern, lines[0]))
     max = re.search(r"^\w+", lines[0]).group() == "maximize"
     xHuelg = -1
-
+    
+    #Añade x1, x2, xn para tener los nombres de las variables en una lista
     for i in range(1, vars + 1):
         VBv.append(f'x{i}')
-
+    
+    #hh son los coeficientes de la función objetivo
     hh = re.findall(pattern, lines[0])
+    #Se usan para hacer una matriz xF que es la matriz de restricciones pero ordenadas, como 
+    #[[10, 5, '<', 500],[...], ...]
+    #[[x1, x1, <>, LD], ...]
     for i in range(2, len(lines)):
         y = re.findall(pattern, lines[i])
-        print(y)
         tem = 0
-        xF.append([float(y[j][0]) if j < vars and y[j][0] != '' else float(y[j][len(y[0]) - 2]) if j == (
-                    len(y) - 1) else y[j][len(y[0]) - 1] if j == (len(y) - 2) else 0 for j in range(len(y))])
+        xF.append([float(y[j][0]) if j < vars and y[j][0] != '' else 
+                   float(y[j][len(y[0]) - 2]) if j == (len(y) - 1) else 
+                   y[j][len(y[0]) - 1] if j == (len(y) - 2) else 0 for j in range(len(y))])
 
         for j in range(vars):
             if y[j+tem][1] == hh[j][1]:
@@ -70,8 +75,6 @@ def miVersion(x):
             xF[i - 2].insert(j, 0)
             tem -= 1
 
-
-    print(xF)
 
     """Nombres horizontales y verticales variables básicas, y ademas calcula el numero de variables que tienen 
     mayor o igual que y menor o igual que haciendo un array de numeros que dan cuenta el numero de variables 

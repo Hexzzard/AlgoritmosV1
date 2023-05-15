@@ -1,0 +1,24 @@
+Explicación de la función de optimización
+TL;RD
+El código usa programación lineal para optimizar una función objetivo lineal sujeta a restricciones lineales. Toma un conjunto de restricciones lineales, una función objetivo y un tipo de optimización (maximización o minimización) como entrada y genera el valor óptimo de la función objetivo y los valores de las variables de decisión que alcanzan el valor óptimo.
+Explicación
+El código utiliza los módulos re y matplotlib.pyplot para optimizar una función objetivo lineal sujeta a restricciones lineales. El código primero define un conjunto de restricciones lineales en forma de desigualdades y ecuaciones. Luego, el código define la función objetivo que se optimizará, que también es una función lineal de las variables de decisión. El código también especifica el tipo de optimización a realizar, que puede ser maximización o minimización.
+Luego, el código define varias funciones para convertir las restricciones lineales y la función objetivo en una forma que se pueda resolver mediante programación lineal. La función coeficientes extrae los coeficientes de una ecuación lineal o desigualdad de una cadena. La función str_int convierte los coeficientes de cadenas a números enteros o flotantes. La función función calcula el valor de una ecuación lineal en términos de las variables de decisión. La función de inecuación determina si una desigualdad lineal dada se satisface con un conjunto dado de valores para las variables de decisión. La función region_factible determina la región factible de las restricciones lineales al encontrar la intersección de los semiplanos definidos por las desigualdades lineales. La función obtener_inter encuentra todas las intersecciones entre las restricciones lineales. La función encontrar encuentra la intersección entre dos ecuaciones lineales. La función f_obj calcula el valor de la función objetivo para un conjunto dado de valores para las variables de decisión. La función obtener_optimo encuentra el valor óptimo de la función objetivo y los valores de las variables de decisión que alcanzan el valor óptimo.
+Finalmente, la función gráfica traza la región factible de las restricciones lineales y la solución óptima.
+Posibles errores
+
+El código asume que las restricciones lineales y la función objetivo están en un formato específico y es posible que no funcionen correctamente si la entrada no está en el formato correcto.
+El código asume que las restricciones lineales y la función objetivo están todas en dos dimensiones y es posible que no funcionen correctamente para problemas de dimensiones superiores.
+Es posible que el código no funcione correctamente si las restricciones lineales no son linealmente independientes.
+
+Posibles mejoras
+
+Agregue validación de entrada para asegurarse de que la entrada esté en el formato correcto.
+Agregue soporte para problemas de dimensiones superiores.
+Agregue soporte para restricciones no lineales y funciones objetivas.
+
+Referencias
+
+Programación lineal
+Python re módulo
+Módulo pyplot de Matplotlib

@@ -9,7 +9,7 @@ parser = argparse.ArgumentParser(description='Este script cuenta con 3 funciones
 #llamada a funciones
 parser.add_argument('--concavidad', action='store_true', help='calcular concavidad, ingresar lambda (-l), la funcion (-fx), valor minimo (-xa), valor maximo (-xb)')
 parser.add_argument('--derivar', action='store_true', help='calcular derivada, ingresar el punto en donde se evaluara (-x), el valor de delta (-d) y la funcion (-fx)')
-parser.add_argument('--delta_x', action='store_true', help='calcular delta X, ingresar el punto en donde se evaluara, (-x), la funcion (-fx), el valor de la derivada (-d) y un valor de error abosuluto epsilon (-e)')
+parser.add_argument('--delta_x', action='store_true', help='calcular delta X, ingresar el punto en donde se evaluara, (-x), la funcion (-fx), el valor de la derivada (-dx) y un valor de error abosuluto epsilon (-e)')
 
 #definicion de parametros
 parser.add_argument('-l', type=float, help='Valor de lambda, entre 0 y 1')
@@ -115,9 +115,9 @@ def Concavidad(xa, xb, L, fx):
 
     return True
 
-#esta funcion calcula la derivada en funcion del limite de la interseccion de las dos rectas
+#esta funcion calcula la derivada en funcion de la pendiente formada entre dos rectas
 def Derivada (x, delta, fx): 
-    dx = (evaluar_funcion(x+delta, fx) - evaluar_funcion(x, fx))/delta #aplicamos la formula
+    dx = (evaluar_funcion(x+delta, fx) - evaluar_funcion(x, fx))/delta #aplicamos la formula de la pendiente
     print(f"la derivada de la funcion es de: {dx}")
     return dx
 

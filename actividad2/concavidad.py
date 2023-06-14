@@ -55,3 +55,31 @@ def Graficar():
     
 Concavidad()
 Graficar()
+
+def Gradiente_Descendente_Barzilai_Borwein(funcion, punto, t_inicial, epsilon=1e-5, max_iterations=10):
+    punto = np.array(punto)
+
+    iteracion = 1 #hacemos la primera iteracion fuera del ciclo y en base a el valor de t_inicial
+    gradiente_anterior = np.array(Gradiente_analitico(funcion, punto)) 
+    delta_x = -gradiente_anterior
+    punto_anterior = punto
+    punto = punto + np.dot(t_inicial,delta_x)
+
+    while True:
+        print(f"Iteracion {iteracion}: punto {punto}")
+        gradiente = np.array(Gradiente_analitico(funcion, punto))
+        error = np.linalg.norm(gradiente) #determinamos el error que esta en funcion de la norma del gradiente
+        if error < epsilon or iteracion >= max_iterations:
+            print(f"Se realizaron {iteracion} iteraciones, Error de {error}")
+            break
+        delta_x = -gradiente
+        t = np.abs(np.dot((punto- punto_anterior), (gradiente - gradiente_anterior))) / np.linalg.norm(gradiente - gradiente_anterior)**2
+        print(delta_x)
+        print(np.dot(t,delta_x))
+        #actualizamos las variables temporales
+        gradiente_anterior = gradiente
+        punto_anterior = punto
+        punto = punto + np.dot(t,delta_x)
+        iteracion += 1 
+        
+    return punto
